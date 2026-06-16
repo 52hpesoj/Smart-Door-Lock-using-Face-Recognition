@@ -1,0 +1,111 @@
+=<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security System - Scanning</title>
+    <style>
+        :root {
+            --primary: #00ffff;
+            --bg: #0a0a0a;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .header {
+            font-size: 24px;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+        .scanner-container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #000;
+        }
+        .scanner-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Gives the video feed a security camera aesthetic */
+            filter: grayscale(40%) contrast(120%); 
+        }
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.8);
+            box-shadow: 0 0 15px 5px rgba(0, 255, 255, 0.4);
+            animation: scan 2.5s linear infinite;
+        }
+        .crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .crosshair::before, .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 255, 255, 0.5);
+        }
+        .crosshair::before { top: 24px; left: -10px; width: 70px; height: 1px; }
+        .crosshair::after { left: 24px; top: -10px; height: 70px; width: 1px; }
+        
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; text-shadow: 0 0 20px var(--primary); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">System Locked // Awaiting Biometric Input</div>
+    
+    <div class="scanner-container">
+        <img src="{{ url_for('video_feed') }}" alt="AI Camera Stream">
+        <div class="scan-line"></div>
+        <div class="crosshair"></div>
+    </div>
+
+    <script>
+        // Check the AI status every 1 second
+        setInterval(function() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "unlocked") {
+                        window.location.href = "/recognized";
+                    }
+                })
+                .catch(error => console.error('Error checking status:', error));
+        }, 1000);
+    </script>
+</body>
+</html>

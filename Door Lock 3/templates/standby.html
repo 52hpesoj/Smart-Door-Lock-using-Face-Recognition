@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Door Lock - Standby</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; background-color: #222; color: white; padding-top: 20%;}
+        h1 { font-size: 3em; color: #888; }
+    </style>
+</head>
+<body>
+    <h1>SYSTEM ASLEEP</h1>
+    <p>Waiting for visitor to press the doorbell...</p>
+
+    <script>
+        // Check the doorbell status every 1 second (1000 milliseconds)
+        setInterval(function() {
+            fetch('/check_doorbell')
+                .then(response => response.json())
+                .then(data => {
+                    // If Python says the doorbell is ringing, redirect to the scanner!
+                    if (data.ringing === true) {
+                        window.location.href = "/scan"; // This sends them to the scanning route
+                    }
+                });
+        }, 1000);
+    </script>
+</body>
+</html>

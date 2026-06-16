@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Door Lock 3",
+			"path": "."
+		},
+		{
+			"name": "esp32 code",
+			"path": "../esp32 code"
+		}
+	],
+	"settings": {}
+}
